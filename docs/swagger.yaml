@@ -1,0 +1,520 @@
+definitions:
+  request.CreateContractor:
+    properties:
+      duration:
+        example: "0"
+        type: string
+      name:
+        type: string
+    type: object
+  request.CreateEmployee:
+    properties:
+      name:
+        type: string
+      role:
+        type: string
+    type: object
+  request.CreateRole:
+    properties:
+      name:
+        type: string
+    type: object
+  request.CreateTag:
+    properties:
+      value:
+        type: string
+    type: object
+  request.MemberTag:
+    properties:
+      values:
+        items:
+          type: string
+        type: array
+    type: object
+  response.Contractor:
+    properties:
+      duration:
+        type: integer
+      id:
+        type: integer
+      name:
+        type: string
+      tags:
+        items:
+          type: string
+        type: array
+    type: object
+  response.Employee:
+    properties:
+      id:
+        type: integer
+      name:
+        type: string
+      role:
+        type: string
+      tags:
+        items:
+          type: string
+        type: array
+    type: object
+  response.Role:
+    properties:
+      id:
+        type: integer
+      name:
+        type: string
+    type: object
+  response.Tag:
+    properties:
+      id:
+        type: integer
+      value:
+        type: string
+    type: object
+info:
+  contact: {}
+paths:
+  /contractor:
+    get:
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/response.Contractor'
+            type: array
+        "500":
+          description: When there's an issue on the server side
+          schema:
+            type: string
+      summary: List all contractors
+      tags:
+      - contractors
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Add contractor
+        in: body
+        name: contractor
+        required: true
+        schema:
+          $ref: '#/definitions/request.CreateContractor'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Contractor'
+        "400":
+          description: If either name or duration is empty
+          schema:
+            type: string
+        "500":
+          description: When there's an issue on the server side
+          schema:
+            type: string
+      summary: Create a contractor
+      tags:
+      - contractors
+  /contractor/{id}:
+    delete:
+      consumes:
+      - application/json
+      parameters:
+      - description: Contractor ID
+        format: int
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+        "500":
+          description: When there's an issue on the server side
+          schema:
+            type: string
+      summary: Delete a contractor by ID
+      tags:
+      - contractors
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - description: Contractor ID
+        format: int
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Contractor'
+        "500":
+          description: When there's an issue on the server side
+          schema:
+            type: string
+      summary: Get a contractor by ID
+      tags:
+      - contractors
+  /employee:
+    get:
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/response.Employee'
+            type: array
+        "500":
+          description: When there's an issue on the server side
+          schema:
+            type: string
+      summary: List all employees
+      tags:
+      - employees
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Add employee
+        in: body
+        name: employee
+        required: true
+        schema:
+          $ref: '#/definitions/request.CreateEmployee'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Employee'
+        "400":
+          description: If either name or role is empty
+          schema:
+            type: string
+        "404":
+          description: If the specified role name cannot be found in the DB
+          schema:
+            type: string
+        "500":
+          description: When there's an issue on the server side
+          schema:
+            type: string
+      summary: Create an employee
+      tags:
+      - employees
+  /employee/{id}:
+    delete:
+      consumes:
+      - application/json
+      parameters:
+      - description: Employee ID
+        format: int
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+        "500":
+          description: When there's an issue on the server side
+          schema:
+            type: string
+      summary: Delete an employee by ID
+      tags:
+      - employees
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - description: Employee ID
+        format: int
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Employee'
+        "500":
+          description: When there's an issue on the server side
+          schema:
+            type: string
+      summary: Get an employee by ID
+      tags:
+      - employees
+  /member/{id}/tags:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Member ID
+        format: int
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Member Tags
+        in: body
+        name: tags
+        required: true
+        schema:
+          $ref: '#/definitions/request.MemberTag'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+        "400":
+          description: When not all the specified tags exist in the DB
+          schema:
+            type: string
+        "500":
+          description: When there's an issue on the server side
+          schema:
+            type: string
+      summary: Add tags to a member
+      tags:
+      - tags
+  /reset:
+    post:
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+      summary: Reset the DB
+      tags:
+      - misc
+  /role:
+    get:
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/response.Role'
+            type: array
+        "500":
+          description: When there's an issue on the server side
+          schema:
+            type: string
+      summary: List all roles
+      tags:
+      - roles
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Add role
+        in: body
+        name: contractor
+        required: true
+        schema:
+          $ref: '#/definitions/request.CreateRole'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Role'
+        "400":
+          description: If name is empty
+          schema:
+            type: string
+        "500":
+          description: When there's an issue on the server side
+          schema:
+            type: string
+      summary: Create a role
+      tags:
+      - roles
+  /role/{id}:
+    delete:
+      consumes:
+      - application/json
+      parameters:
+      - description: Role ID
+        format: int
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+        "500":
+          description: When there's an issue on the server side
+          schema:
+            type: string
+      summary: Delete a role by ID
+      tags:
+      - roles
+  /role/{name}:
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - description: Role name
+        format: string
+        in: path
+        name: name
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Role'
+        "500":
+          description: When there's an issue on the server side
+          schema:
+            type: string
+      summary: Get a role by name
+      tags:
+      - roles
+  /tag:
+    get:
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/response.Tag'
+            type: array
+        "500":
+          description: When there's an issue on the server side
+          schema:
+            type: string
+      summary: List all tags
+      tags:
+      - tags
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Add tag
+        in: body
+        name: tag
+        required: true
+        schema:
+          $ref: '#/definitions/request.CreateTag'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Tag'
+        "400":
+          description: If value is empty
+          schema:
+            type: string
+        "500":
+          description: When there's an issue on the server side
+          schema:
+            type: string
+      summary: Create a tag
+      tags:
+      - tags
+  /tag/{id}:
+    delete:
+      consumes:
+      - application/json
+      parameters:
+      - description: Tag ID
+        format: int
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+        "500":
+          description: When there's an issue on the server side
+          schema:
+            type: string
+      summary: Delete a tag by ID
+      tags:
+      - tags
+  /tag/{value}:
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - description: Tag value
+        format: string
+        in: path
+        name: name
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Tag'
+        "500":
+          description: When there's an issue on the server side
+          schema:
+            type: string
+      summary: Get a tag by value
+      tags:
+      - tags
+swagger: "2.0"
